@@ -13,6 +13,10 @@ All powered using a **zero-click-through transparent Electron overlay**.
 
 ---
 
+
+
+
+
 ## 🚀 Features
 
 ### 🔹 Real-Time Narration  
@@ -227,3 +231,10 @@ requests.post("http://localhost:8000/search", json={
     "collection": "chats",
     "limit": 5
 })
+
+
+-------------------------------------------------------------------FINE TUNNED MODEL---------------------------------------------------------------------------------------------------------
+
+Repo link: Bharathparam11/The_Reverse_Wisperer_TTS
+
+
