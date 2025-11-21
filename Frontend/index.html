@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft AI Overlay</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            margin: 0;
+            background: transparent;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            overflow: hidden;
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+
+        /* MAIN BOX (All UI inside this box) */
+        #mainBox {
+            position: fixed;
+            top: 8px;
+            left: 8px;
+            width: 320px;
+            padding: 10px;
+            background: rgba(20, 20, 30, 0.75);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 10px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        #connectionStatus {
+            font-size: 10px;
+            margin-bottom: 8px;
+            padding: 4px;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        #connectionStatus.connected {
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.5);
+        }
+
+        #connectionStatus.disconnected {
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+
+        .quest-line {
+            color: #ffd700;
+            margin-top: 6px;
+            border-bottom: 1px dashed rgba(255, 215, 0, 0.4);
+            padding-bottom: 6px;
+        }
+
+        .narration-line {
+            color: white;
+            margin-top: 6px;
+        }
+
+        .villager-box {
+            margin-top: 6px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .villager-box span:first-child {
+            font-size: 18px;
+        }
+
+        /* Quest complete message inside the box */
+        #questComplete {
+            margin-top: 10px;
+            padding: 10px;
+            text-align: center;
+            background: rgba(255, 200, 0, 0.9);
+            border: 2px solid #ffea00;
+            border-radius: 6px;
+            color: #222;
+            font-size: 12px;
+            display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- EVERYTHING is inside this ONE box -->
+    <div id="mainBox">
+        <div id="connectionStatus" class="disconnected">❌ Disconnected</div>
+
+        <div id="contentArea"></div>
+
+        <div id="questComplete">✨ QUEST COMPLETED! ✨</div>
+    </div>
+
+    <script>
+        let currentBackendUrl = "http://localhost:8000";
+        let lastState = {};
+
+        const conn = document.getElementById("connectionStatus");
+        const content = document.getElementById("contentArea");
+        const questComplete = document.getElementById("questComplete");
+
+        function updateConnection(ok) {
+            if (ok) {
+                conn.textContent = "⚡ Connected";
+                conn.classList.remove("disconnected");
+                conn.classList.add("connected");
+            } else {
+                conn.textContent = "❌ Disconnected";
+                conn.classList.remove("connected");
+                conn.classList.add("disconnected");
+            }
+        }
+
+        function renderState() {
+            let html = "";
+
+            if (lastState.quest) {
+                html += `<div class="quest-line">📜 ${lastState.quest}</div>`;
+            }
+
+            if (lastState.narration) {
+                html += `<div class="narration-line">${lastState.narration}</div>`;
+            }
+
+            if (lastState.villager) {
+                html += `
+                <div class="villager-box">
+                    <span>🧑‍🌾</span>
+                    <span>${lastState.villager}</span>
+                </div>`;
+            }
+
+            content.innerHTML = html;
+
+            if (lastState.quest_check?.toLowerCase().startsWith("yes")) {
+                questComplete.style.display = "block";
+                setTimeout(() => questComplete.style.display = "none", 3000);
+            }
+        }
+
+        setInterval(async () => {
+            try {
+                const res = await fetch(`${currentBackendUrl}/state`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+
+                updateConnection(true);
+                lastState = data;
+                renderState();
+
+            } catch (err) {
+                updateConnection(false);
+            }
+        }, 2000);
+    </script>
+
+</body>
+
+</html>
