@@ -1,4 +1,4 @@
-# 🎮 AI-Powered Minecraft Overlay (Real-Time Narration + Quests + NPC Dialogue)
+# 🎮 AI-Powered Overlay (Real-Time Narration + Quests + NPC Dialogue)
 
 This project adds an **AI-powered HUD overlay** on top of Minecraft (or any game).  
 It uses **Gemini 2.5 Flash**, **screen capture**, **FastAPI**, and an **Electron transparent overlay** to display:
@@ -25,7 +25,7 @@ The system analyzes the game screen every few seconds and describes the scene in
 ### 🔹 Dynamic Quests  
 Every few minutes, the AI generates a new short quest based on the current gameplay.
 
-### 🔹 NPC / Villager Reactions  
+### 🔹 NPC Reactions  
 Random NPC-style one-liners reacting to what is happening in the game.
 
 ### 🔹 Quest Completion Check  
@@ -181,8 +181,7 @@ brew services start mongodb-community
 
 
 2. Install Python dependencies:
-bash
-pip install -r requirements.txt
+bash
 
 
 3. Configure environment:
@@ -200,7 +199,7 @@ python api_server.py
 
 2. In another terminal, run the game overlay:
 bash
-python main_integrated.py
+python app.py
 
 
 ## API Endpoints
